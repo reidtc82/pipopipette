@@ -1,3 +1,4 @@
+# Has a boarder that holds references to the lines, but those are accessed directly for setting.
 class Box:
     def __init__(self, value, boarder):
             self.owner = None
