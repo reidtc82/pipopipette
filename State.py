@@ -1,5 +1,7 @@
+# Siply meant to track the progress of the game. I can acces the lines individually.
 class State:
     def __init__(self, field):
+        # Field is just an array of boxes.
         self.field = field
         self.scoreState = {'p1' : 0, 'p2' : 0}
 
@@ -14,3 +16,10 @@ class State:
 
     def get_field(self):
         return self.field
+
+    def check_complete(self):
+        complete = True
+        for box in field:
+            if not box.get_owner():
+                complete = False
+        return complete
