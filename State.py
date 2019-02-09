@@ -3,15 +3,15 @@ class State:
     def __init__(self, field):
         # Field is just an array of boxes.
         self.field = field
-        self.scoreState = {'p1' : 0, 'p2' : 0}
+        self.scoreState = {'human' : 0, 'computer' : 0}
 
     def score_state(self):
         # If this is too slow move to the front end when line gets selected.
         for box in field:
-            if box.get_owner() == Player.ONE:
-                self.scoreState['p1'] += box.get_value()
-            elif box.get_owner() == Player.TWO:
-                self.scoreState['p2'] += box.get_value()
+            if box.get_owner() == Player.HUMAN:
+                self.scoreState['human'] += box.get_value()
+            elif box.get_owner() == Player.COMPUTER:
+                self.scoreState['computer'] += box.get_value()
         return self.scoreState
 
     def get_field(self):

@@ -1,5 +1,5 @@
 from enum import Enum
 
 class Player(Enum):
-    ONE = 1
-    TWO = 2
+    HUMAN = 1
+    COMPUTER = 2

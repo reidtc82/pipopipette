@@ -1,7 +1,7 @@
 # Just holds the lines for the boxes for state checking and management.
 class Boarder:
-    def __init__(self, lines):
-        self.lines = lines
+    def __init__(self, top, right, bottom, left):
+        self.lines = {'top': top, 'right': right, 'bottom': bottom, 'left': left}
 
     def is_closed(self):
         closed = True
