@@ -1,8 +1,8 @@
-import State from State
-import Line from Line
-import Box from Box
-import Boarder from Boarder
-import Manager from Manager
+from State import State
+from Line import Line
+from Box import Box
+from Boarder import Boarder
+from Manager import Manager
 from random import randint
 
 # Prompt for playing field dimension.
@@ -56,37 +56,37 @@ class Pipopipette:
     def get_vlines(self):
         return self.vlines
 
-    def play(self, whoIsFirst, usePruning):
-        #Do all the solving here
-        currentState = self.seedState
-        currentPlayer = whoIsFirst
-        while currentState.has_open():
-            #keep playing
-            if currentPlayer == Player.HUMAN:
-
-                # self.manager.unlock_input()
-                # #wait for input
-                # io = None
-                # while not io:
-                #     io = self.manager.check_io()
-                #
-                # #process the input
-                # for l in self.hlines:
-                #     if l = io['selected']:
-                #         l.set()
-                #
-                # for i in self.vlines:
-                #     if l = io['selected']:
-                #         l.set()
-
-                #switch player
-                currentPlayer = Player.COMPUTER
-
-            elif currentPlayer == Player.COMPUTER:
-                self.manager.lock_input()
-                #do algoirthm
-                #switch player
-                currentPlayer = Player.HUMAN
+    # def play(self, whoIsFirst, usePruning):
+    #     #Do all the solving here
+    #     currentState = self.seedState
+    #     currentPlayer = whoIsFirst
+    #     while currentState.has_open():
+    #         #keep playing
+    #         if currentPlayer == Player.HUMAN:
+    #
+    #             # self.manager.unlock_input()
+    #             # #wait for input
+    #             # io = None
+    #             # while not io:
+    #             #     io = self.manager.check_io()
+    #             #
+    #             # #process the input
+    #             # for l in self.hlines:
+    #             #     if l = io['selected']:
+    #             #         l.set()
+    #             #
+    #             # for i in self.vlines:
+    #             #     if l = io['selected']:
+    #             #         l.set()
+    #
+    #             #switch player
+    #             currentPlayer = Player.COMPUTER
+    #
+    #         elif currentPlayer == Player.COMPUTER:
+    #             self.manager.lock_input()
+    #             #do algoirthm
+    #             #switch player
+    #             currentPlayer = Player.HUMAN
 
 
         #board is closed return scores
