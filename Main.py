@@ -16,7 +16,7 @@ from random import randint
 # 3. Create starting state passing it the array of boxes as the "field."
 
 class Pipopipette:
-    def __init__(self, xdim, ydim, plies):
+    def __init__(self, xdim, ydim, plies, usePruning):
         self.xdim = xdim
         self.ydim = ydim
         self.plies = plies
@@ -40,7 +40,21 @@ class Pipopipette:
                 boarder = Boarder(self.hlines[][], self.vlines[][], self.hlines[][], self.vlines[][])
                 field[i][j] = Box(randint(0,9), boarder)
         #raw state with no moves
-        self.seedState = State(field)
+        self.currentState = State(field)
+        self.pruning = usePruning
+
+    def get_current_state(self):
+        return self.currentState
+
+    def calc_next_move(self, state):
+        line = None
+        return line
+
+    def get_hlines(self):
+        return self.hlines
+
+    def get_vlines(self):
+        return self.vlines
 
     def play(self, whoIsFirst, usePruning):
         #Do all the solving here
@@ -49,21 +63,22 @@ class Pipopipette:
         while currentState.has_open():
             #keep playing
             if currentPlayer == Player.HUMAN:
-                self.manager.unlock_input()
-                #wait for input
-                io = None
-                while not io:
-                    io = self.manager.check_io()
 
-                #process the input
-                for l in self.hlines:
-                    if l = io['selected']:
-                        l.set()
+                # self.manager.unlock_input()
+                # #wait for input
+                # io = None
+                # while not io:
+                #     io = self.manager.check_io()
+                #
+                # #process the input
+                # for l in self.hlines:
+                #     if l = io['selected']:
+                #         l.set()
+                #
+                # for i in self.vlines:
+                #     if l = io['selected']:
+                #         l.set()
 
-                for i in self.vlines:
-                    if l = io['selected']:
-                        l.set()
-                        
                 #switch player
                 currentPlayer = Player.COMPUTER
 
