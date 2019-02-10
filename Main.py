@@ -2,7 +2,9 @@ import State from State
 import Line from Line
 import Box from Box
 import Boarder from Boarder
+import Manager from Manager
 from random import randint
+
 # Prompt for playing field dimension.
 # Prompt for plies.
 # I need two arrays of lines; lines vertical and horizontal.
@@ -13,14 +15,14 @@ from random import randint
 # 2. Create array of boxes passing a boarder of lines to each - lines will be reused.
 # 3. Create starting state passing it the array of boxes as the "field."
 
-class Main:
+class Pipopipette:
     def __init__(self, xdim, ydim, plies):
         self.xdim = xdim
         self.ydim = ydim
         self.plies = plies
         self.hlines = [0] *self.ydim+1
         self.vlines = [0] *self.xdim+1
-
+        self.manager = Manager()
         #build horizontal lines
         for i in range(xdim):
             for j in range(ydim+1):
@@ -47,11 +49,30 @@ class Main:
         while currentState.has_open():
             #keep playing
             if currentPlayer == Player.HUMAN:
+                self.manager.unlock_input()
                 #wait for input
+                io = None
+                while not io:
+                    io = self.manager.check_io()
+
+                #process the input
+                for l in self.hlines:
+                    if l = io['selected']:
+                        l.set()
+
+                for i in self.vlines:
+                    if l = io['selected']:
+                        l.set()
+                        
+                #switch player
+                currentPlayer = Player.COMPUTER
 
             elif currentPlayer == Player.COMPUTER:
+                self.manager.lock_input()
                 #do algoirthm
-                
+                #switch player
+                currentPlayer = Player.HUMAN
+
 
         #board is closed return scores
-        return currentState.scoreState()
+        print('Game Over! '+currentState.score_state())
