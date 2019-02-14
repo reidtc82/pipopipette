@@ -1,9 +1,11 @@
+import numpy as np
 from State import State
 from Line import Line
 from Box import Box
 from Boarder import Boarder
 from Manager import Manager
 from random import randint
+import sys
 
 # Prompt for playing field dimension.
 # Prompt for plies.
@@ -20,25 +22,49 @@ class Pipopipette:
         self.xdim = xdim
         self.ydim = ydim
         self.plies = plies
-        self.hlines = [0] *self.ydim+1
-        self.vlines = [0] *self.xdim+1
+        tempy = self.ydim+1
+        tempx = self.xdim+1
+        self.hlines = []
+        self.vlines = []
         self.manager = Manager()
         #build horizontal lines
-        for i in range(xdim):
-            for j in range(ydim+1):
-                self.hlines[i][j] = Line()
+        self.hlines = [[Line() for j in range(ydim+1)] for i in range(xdim)]
+        # for i in range(xdim):
+        #     for j in range(ydim+1):
+        #         self.hlines[i][j] = Line()
 
         #build vertical lines
-        for i in range(ydim):
-            for j in range(xdim+1):
-                self.vlines[i][j] = Line()
+        self.vlines = [[Line() for j in range(ydim)] for i in range(xdim)]
+        # for i in range(ydim):
+        #     for j in range(xdim+1):
+        #         self.vlines[i][j] = Line()
 
-        field = []
-        for i in range(xdim-1):
-            for j in range(ydim-1):
+        field = np.empty((xdim+1,ydim+1))
+        for i in range(xdim+1):
+            for j in range(ydim+1):
                 #draw out this array
-                boarder = Boarder(self.hlines[][], self.vlines[][], self.hlines[][], self.vlines[][])
-                field[i][j] = Box(randint(0,9), boarder)
+                #top,right,bottom,left
+                if i < xdim and j < ydim:
+                    boarder = Boarder(self.hlines[i][j], self.vlines[i+1][j], self.hlines[i+1][j], self.vlines[i][j])
+                elif i < xdim and j == ydim:
+                    if i == 0:
+                        boarder = Boarder(self.hlines[i][j-1], self.vlines[i][j], self.hlines[i+1][j-1], self.vlines[i][j])
+                    if i > 0:
+                        boarder = Boarder(self.hlines[i][j-1], self.vlines[i][j], self.hlines[i+1][j-1], self.vlines[i-1][j])
+                elif j < ydim and i == xdim:
+                    if j == 0:
+                        boarder = Boarder(self.hlines[i-1][j], self.vlines[i][j], self.hlines[i][j], self.vlines[i][j])
+                    elif j > 0:
+                        boarder = Boarder(self.hlines[i-1][j], self.vlines[i][j-1], self.hlines[i][j], self.vlines[i][j-1])
+                elif i == xdim and j == ydim:
+                    boarder = Boarder(self.hlines[i-1][j-1], self.vlines[i][j-1], self.hlines[i][j-1], self.vlines[i-1][j-1])
+
+                rand = randint(0,9)
+                try:
+                    field[i][j] = Box(rand, boarder)
+                except:
+                    print(sys.exc_info()[0])
+
         #raw state with no moves
         self.currentState = State(field)
         self.pruning = usePruning

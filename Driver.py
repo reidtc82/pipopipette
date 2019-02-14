@@ -7,7 +7,7 @@ else:
     from Tkinter import *   ## notice capitalized T in Tkinter
 
 from Main import Pipopipette
-from Player import Player 
+from Player import Player
 
 io = None
 
@@ -22,15 +22,15 @@ texts = [0] *8
 board = PuzzleBoard()
 
 # setting up the tkinter GUI
-master = master
-master.title("8 Puzzle")
+# master = master
+master.title("Pipopipette")
 master.geometry('640x480')
 
 label = Label(master, text="This is 8 Puzzle")
 label.pack()
 
-score = Label(master, text=self.board.getScore())
-score.pack()
+# score = Label(master, text=self.board.getScore())
+# score.pack()
 
 canvasSpace = Canvas(master, width=self.canvas_width, height=self.canvas_height)
 canvasSpace.pack()
