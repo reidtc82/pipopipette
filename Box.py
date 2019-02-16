@@ -1,11 +1,11 @@
 from Line import Line
 # Has a boarder that holds references to the lines, but those are accessed directly for setting.
 class Box:
-    def __init__(self, value):
+    def __init__(self, value, border):
             self.owner = None
             self.value = value
             # Top, Bottom, Left, Right
-            self.border = [Line(), Line(), Line(), Line()]
+            self.border = border
 
     def get_owner(self):
         return self.owner
