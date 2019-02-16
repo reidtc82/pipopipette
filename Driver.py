@@ -9,75 +9,112 @@ else:
 from Main import Pipopipette
 from Player import Player
 
-io = None
+class Game:
+    def __init__(self, master):
+        self.io = None
 
-currentPlayer = Player.COMPUTER
-game = Pipopipette(2, 2, 2, False)
+        self.currentPlayer = Player.COMPUTER
 
-canvas_width = 300
-canvas_height = 300
-rectangles = [0] *8
-texts = [0] *8
+        self.xdim = 6
+        self.ydim = 20
 
-board = PuzzleBoard()
+        self.boxsize = 400/self.ydim
 
-# setting up the tkinter GUI
-# master = master
-master.title("Pipopipette")
-master.geometry('640x480')
+        self.canvas_width = self.xdim*self.boxsize
+        self.canvas_height = self.ydim*self.boxsize
+        self.plies = 2
+        self.rectangles = [0] *8
+        self.texts = [0] *8
 
-label = Label(master, text="This is 8 Puzzle")
-label.pack()
+        self.game = Pipopipette(self.xdim, self.ydim, self.plies, False)
 
-# score = Label(master, text=self.board.getScore())
-# score.pack()
+        # setting up the tkinter GUI
+        self.master = master
+        self.master.title("Pipopipette")
+        self.master.geometry('640x480')
 
-canvasSpace = Canvas(master, width=self.canvas_width, height=self.canvas_height)
-canvasSpace.pack()
+        self.label = Label(master, text="Pipopipette")
+        self.label.pack()
 
-canvasSpace.create_rectangle(0, 0, 300, 300, fill="#696969")
-drawBoard(self.canvasSpace)
+        # score = Label(master, text=self.board.getScore())
+        # score.pack()
 
-resetPuzzle_button = Button(master, text="Reset Puzzle", command=self.newPuzzle)
-resetPuzzle_button.pack()
+        self.canvasSpace = Canvas(master, width=self.canvas_width, height=self.canvas_height)
+        self.canvasSpace.pack()
 
-close_button = Button(master, text="Close", command=master.quit)
-close_button.pack()
+        self.canvasSpace.create_rectangle(0, 0, self.canvas_width, self.canvas_height, fill="#696969")
+        self.draw_board(self.canvasSpace)
 
-up_button = Button(master, text="Up", command=self.moveUp)
-up_button.pack()
+        # self.resetPuzzle_button = Button(master, text="Reset Puzzle", command=self.newPuzzle)
+        # self.resetPuzzle_button.pack()
 
-down_button = Button(master, text="Down", command=self.moveDown)
-down_button.pack()
+        self.close_button = Button(master, text="Close", command=master.quit)
+        self.close_button.pack()
 
-left_button = Button(master, text="Left", command=self.moveLeft)
-left_button.pack()
+        # self.up_button = Button(master, text="Up", command=self.moveUp)
+        # self.up_button.pack()
 
-right_button = Button(master, text="Right", command=self.moveRight)
-right_button.pack()
+        # self.down_button = Button(master, text="Down", command=self.moveDown)
+        # self.down_button.pack()
 
-while not game.get_current_state().check_complete():
-    if currentPLayer == Player.HUMAN:
-        unlock_input()
-        while not io:
-            pass
-        update_board(io)
-        io = None
-        currentPlayer = Player.COMPUTER
-    elif currentPlayer == Player.COMPUTER:
-        lock_input()
-        io = game.calc_next_move()
-        update_board(io)
-        io = None
-        currentPlayer = Player.HUMAN
+        # self.left_button = Button(master, text="Left", command=self.moveLeft)
+        # self.left_button.pack()
 
-#If it got this far its done
-print(game.get_current_state().score_state())
+        # self.right_button = Button(master, text="Right", command=self.moveRight)
+        # self.right_button.pack()
 
-def update_board(selected):
-    for l in game.get_hlines():
-        if l == selected:
-            l.set()
-    for l in game.get_vlines():
-        if l == selected:
-            l.set()
+    def play(self):
+        while not self.game.get_current_state().check_complete():
+            if currentPlayer == Player.HUMAN:
+                unlock_input()
+                while not io:
+                    pass
+                update_board(io)
+                io = None
+                currentPlayer = Player.COMPUTER
+            elif currentPlayer == Player.COMPUTER:
+                lock_input()
+                io = self.game.calc_next_move()
+                update_board(io)
+                io = None
+                currentPlayer = Player.HUMAN
+
+        #If it got this far its done
+        print(self.game.get_current_state().score_state())
+
+    def update_board(selected):
+        for l in self.game.get_hlines():
+            if l == selected:
+                l.set()
+        for l in self.game.get_vlines():
+            if l == selected:
+                l.set()
+
+    def draw_board(self, canvas):
+        for rec in self.rectangles:
+            canvas.delete(rec)
+
+        for txt in self.texts:
+            canvas.delete(txt)
+
+        currentState = self.game.get_current_state().get_field()
+        for i in range(self.xdim):
+            for j in range(self.ydim):
+                if currentState[i][j] != 0:
+                    origin_X = self.boxsize*i
+                    origin_Y = self.boxsize*j
+                    final_X = origin_X+self.boxsize
+                    final_Y = origin_Y+self.boxsize
+                    if currentState[i][j].get_owner() == Player.HUMAN:
+                        fillcolor = "#1E559E"
+                    elif currentState[i][j].get_owner() == Player.COMPUTER:
+                        fillcolor = "#DD0000"
+                    else:
+                        fillcolor = "#DCDCDC"
+                    self.rectangles.append(canvas.create_rectangle(origin_X, origin_Y, final_X, final_Y, fill=fillcolor))
+                    self.texts.append(canvas.create_text(origin_X+(self.boxsize/2),origin_Y+(self.boxsize/2),text=currentState[i][j].get_value()))
+
+
+root = Tk()
+mainPanel = Game(root)
+root.mainloop()
