@@ -10,15 +10,17 @@ class State:
         self.scoreState = {'human' : 0, 'computer' : 0}
         self.lines = lines
         self.boxes = boxes
-
+        lineCount = 1
         #move out of here
         for i in range(xdim+(xdim-1)):
             self.lines.append([])
             for j in range(ydim+(ydim-1)):
                 if (j == 0 or j%2 == 0) and (i != 0 and i%2 != 0):
-                    self.lines[i].append(Line())
+                    self.lines[i].append(Line('L'+str(lineCount)))
+                    lineCount+=1
                 elif (j != 0 and j%2 != 0) and (i == 0 or i%2 == 0):
-                    self.lines[i].append(Line())
+                    self.lines[i].append(Line('L'+str(lineCount)))
+                    lineCount+=1
                 else:
                     self.lines[i].append(None)
 
