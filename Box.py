@@ -18,3 +18,11 @@ class Box:
 
     def set_owner(self, owner):
         self.owner = owner
+
+    def is_closed(self):
+        closed = True
+        for l in self.border:
+            if not l.is_set():
+                closed = False
+                break
+        return closed
