@@ -4,27 +4,20 @@ from Player import Player
 from copy import deepcopy
 import sys
 
-# Prompt for playing field dimension.
-# Prompt for plies.
-# I need two arrays of lines; lines vertical and horizontal.
-# Need to construct an array of boxes to pass to State.
-
-# Init order:
-# 1. Create two line arrays and populate with new lines.
-# 2. Create array of boxes passing a boarder of lines to each - lines will be reused.
-# 3. Create starting state passing it the array of boxes as the "field."
-
 class Pipopipette:
     #xdim and ydim in number of DOTS!
-    def __init__(self, xdim, ydim, plies):
+    def __init__(self, xdim, ydim, plies, useAB):
         self.xdim = xdim
         self.ydim = ydim
-        self.IMPATIENCEFACTOR = 1 # something to keep the wait times reasonable at the beginning of the game.
+        self.IMPATIENCEFACTOR = 2 # something to keep the wait times reasonable at the beginning of the game.
         self.plies = plies*2
-        # self.pruning = usePruning
         self.currentState = State(xdim, ydim, [], [])
         self.infinity = float('inf')
         self.moveCount = 1
+        if useAB == 'Y':
+            self.useAB = True
+        else:
+            self.useAB = False
 
     def play(self, currentPlayer):
         while not self.currentState.check_complete():
@@ -64,8 +57,9 @@ class Pipopipette:
                         if newState:
                             childScore = newState.score_state()['computer']-newState.score_state()['human']
                             alpha = max(alpha, childScore)
-                            if alpha >= beta:
-                                break
+                            if self.useAB:
+                                if alpha >= beta:
+                                    break
                             if childScore>= best:
                                 best = childScore
                                 favoriteChild = child
@@ -78,8 +72,9 @@ class Pipopipette:
                         if newState:
                             childScore = newState.score_state()['computer']-newState.score_state()['human']
                             beta = min(beta, childScore)
-                            if alpha >= beta:
-                                break
+                            if self.useAB:
+                                if alpha >= beta:
+                                    break
                             if childScore < best:
                                 best = childScore
                                 favoriteChild = child
@@ -125,7 +120,7 @@ class Pipopipette:
 
                             aValidSelection = True
                             self.moveCount+=1
-                            if self.moveCount%2 == 0:
+                            if self.moveCount%3 == 0:
                                 self.IMPATIENCEFACTOR+=1
                         elif l.get_id() == lineSelected and l.is_set():
                             print('That line is already selected. Try again.')
