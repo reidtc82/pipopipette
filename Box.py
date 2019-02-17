@@ -6,6 +6,7 @@ class Box:
             self.value = value
             # Top, Bottom, Left, Right
             self.border = border
+            # print(self.border)
 
     def get_owner(self):
         return self.owner
@@ -21,8 +22,11 @@ class Box:
 
     def is_closed(self):
         closed = True
-        for l in self.border:
-            if not l.is_set():
-                closed = False
-                break
+        if (not self.border['top'].is_set()) or (not self.border['bottom'].is_set()) or (not self.border['left'].is_set()) or (not self.border['right'].is_set()):
+            closed = False
+        # for l in self.border:
+        #     print(l)
+        #     if not l.is_set():
+        #         closed = False
+        #         break
         return closed

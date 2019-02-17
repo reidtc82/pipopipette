@@ -1,5 +1,7 @@
 import numpy as np
 from State import State
+from Player import Player
+from copy import deepcopy
 import sys
 
 # Prompt for playing field dimension.
@@ -19,29 +21,32 @@ class Pipopipette:
         self.ydim = ydim
         self.plies = plies
         # self.pruning = usePruning
-        self.currentState = State(xdim, ydim)
+        self.currentState = State(xdim, ydim, [], [])
         self.infinity = float('inf')
 
     def play(self, currentPlayer):
-        if not self.currentState.check_complete():
+        while not self.currentState.check_complete():
             if currentPlayer == Player.HUMAN:
-                self.print_board(state)
+                self.print_board(self.currentState)
+                print('Your score is {0}'.format(self.currentState.score_state()['human']))
+                print('Computer score is {0}'.format(self.currentState.score_state()['computer']))
                 self.take_move()
                 # get human input and set state lines accordingly
                 currentPlayer = Player.COMPUTER
             elif currentPlayer == Player.COMPUTER:
                 # get computer input
                 passState = deepcopy(self.currentState)
-
+                # print('current Stte 1: '+str(self.currentState))
                 self.currentState = self.min_max_ab(passState, True, 1)
-
+                # print('current Stte 2: '+str(self.currentState))
                 currentPlayer = Player.HUMAN
-        elif:
-            #return the scoring object
-            return state.score_state()
+
+        #return the scoring object
+        return self.currentState.score_state()
 
     def min_max_ab(self, state, maximize, depth):
         if depth == self.plies:
+            # print('End of plies')
             return state
         else:
             if state.check_complete():
@@ -75,10 +80,34 @@ class Pipopipette:
                     if not parent.get_lines()[i][j].is_set():
                         tempChild = deepcopy(parent)
                         tempChild.get_lines()[i][j].set()
-                        for b in tempChild.get_boxes():
-                            if b:
-                                if b.is_closed() and not b.get_owner():
-                                    b.set_owner(Player.COMPUTER)
-                                    break
+                        for row in tempChild.get_boxes():
+                            for b in row:
+                                if b:
+                                    if b.is_closed() and not b.get_owner():
+                                        b.set_owner(Player.COMPUTER)
+                                        break
                         children.append(tempChild)
         return children
+
+    def take_move(self):
+        io = input('Enter move: ')
+
+    def print_board(self, state):
+        for j in range(self.ydim+(self.ydim-1)):
+            line = ''
+            for i in range(self.xdim+(self.xdim-1)):
+                if (j != 0 and j%2 != 0) and (i != 0 and i%2 != 0):
+                    line = line+' B'+str(state.get_boxes()[i][j].get_value())
+                if (j == 0 or j%2 == 0) and (i == 0 or i%2 == 0):
+                    line = line+' *'
+                if (j != 0 and j%2 != 0) and (i == 0 or i%2 == 0):
+                    if state.get_lines()[i][j].is_set():
+                        line = line+' |'
+                    else:
+                        line = line+'  '
+                if (j == 0 or j%2 == 0) and (i != 0 and i%2 != 0):
+                    if state.get_lines()[i][j].is_set():
+                        line = line+' __'
+                    else:
+                        line = line+'   '
+            print(line)
