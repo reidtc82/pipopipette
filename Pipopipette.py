@@ -1,10 +1,148 @@
-import numpy as np
-from State import State
-from Player import Player
-from copy import deepcopy
+# Reid Case
+# 2/17/19
+# Assignment 2 Minmax Alpha Beta
+
 import sys
 import time
+import numpy as np
+from enum import Enum
+from copy import deepcopy
+from random import randint
 
+# *****************************************************************************
+# Enum enumerates
+class Player(Enum):
+    HUMAN = 1
+    COMPUTER = 2
+
+
+# *****************************************************************************
+# Even more boring than a box is a line.
+class Line:
+    def __init__(self, id):
+        self.selected = False
+        self.id = id
+
+    def is_set(self):
+        return self.selected
+
+    def set(self):
+        self.selected = True
+
+    def get_id(self):
+        return self.id
+
+
+# *****************************************************************************
+# Box class is boring like a box. Boxes can share border lines!
+class Box:
+    def __init__(self, value, border):
+        self.owner = None
+        self.value = value
+        # Top, Bottom, Left, Right
+        self.border = border
+
+    def get_owner(self):
+        return self.owner
+
+    def get_border(self):
+        return self.border
+
+    def get_value(self):
+        return self.value
+
+    def set_owner(self, owner):
+        self.owner = owner
+
+    def is_closed(self):
+        # Just checks each line in the border to see if its closed. Boxes can share border lines!
+        closed = True
+        if (not self.border['top'].is_set()) or (not self.border['bottom'].is_set()) or (not self.border['left'].is_set()) or (not self.border['right'].is_set()):
+            closed = False
+
+        return closed
+
+
+# *****************************************************************************
+# State class to hold all the data for the state.
+class State:
+    def __init__(self, xdim, ydim, lines, boxes):
+        self.scoreState = {'human' : 0, 'computer' : 0}
+        self.lines = lines
+        self.boxes = boxes
+        lineCount = 1
+
+        # Lines and boxes collections are built this way so I can references their indexes together.
+        # Init the lines collection with skips for where dots and boxes should be.
+        for i in range(xdim+(xdim-1)):
+            self.lines.append([])
+            for j in range(ydim+(ydim-1)):
+                if (j == 0 or j%2 == 0) and (i != 0 and i%2 != 0):
+                    self.lines[i].append(Line('L'+str(lineCount)))
+                    lineCount+=1
+                elif (j != 0 and j%2 != 0) and (i == 0 or i%2 == 0):
+                    self.lines[i].append(Line('L'+str(lineCount)))
+                    lineCount+=1
+                else:
+                    self.lines[i].append(None)
+
+        # Init boxes collection with skips for where lines and dots should be.
+        for i in range(xdim+(xdim-1)):
+            self.boxes.append([])
+            for j in range(ydim+(ydim-1)):
+                if (j == 0 or j%2 == 0) or (i == 0 or i%2 == 0):
+                    self.boxes[i].append(None)
+                else:
+                    border = {'top':self.lines[i][j-1],
+                        'bottom':self.lines[i][j+1],
+                        'left': self.lines[i-1][j],
+                        'right':self.lines[i+1][j]}
+                    self.boxes[i].append(Box(randint(1,9), border))
+
+    def score_state(self):
+        tempHumanScore = 0
+        tempComputerScore = 0
+        # Move through all the boxes and check the owner. Attribute the box value to the
+        # owners score.
+        for row in self.boxes:
+            for box in row:
+                if box:
+                    if box.get_owner() == Player.HUMAN:
+                        tempHumanScore += box.get_value()
+                    elif box.get_owner() == Player.COMPUTER:
+                        # print('Box value equals {0}'.format(box.get_value()))
+                        tempComputerScore += box.get_value()
+        self.scoreState['human'] = tempHumanScore
+        self.scoreState['computer'] = tempComputerScore
+        # Returning score as a dictionary so I can call either score.
+        return self.scoreState
+
+    # Getters and setters.
+    def get_boxes(self):
+        return self.boxes
+
+    def set_boxes(self, boxes):
+        self.boxes = boxes
+
+    def get_lines(self):
+        return self.lines
+
+    def set_lines(sef, lines):
+        self.lines = lines
+
+    # This checks all the boxes and if they all have owners were done.
+    def check_complete(self):
+        complete = True
+        for row in self.boxes:
+            for box in row:
+                if box:
+                    if not box.get_owner():
+                        complete = False
+                        break
+        return complete
+
+
+# *****************************************************************************
 # Main class of the game
 class Pipopipette:
     #xdim and ydim in number of DOTS!
@@ -85,7 +223,7 @@ class Pipopipette:
                 if maximize: # alpha player
                     # Set some variables up.
                     best = -self.infinity
-                    favoriteChild = None
+                    favoriteChild = state
 
                     # Make children of the state passed.
                     for child in self.make_babies(state):
@@ -112,7 +250,7 @@ class Pipopipette:
                 else: # beta player
                 # Now assessing for min player.
                     best = self.infinity
-                    favoriteChild = None
+                    favoriteChild = state
                     # Basically does the same as maximize but assigning min for beta.
                     for child in self.make_babies(state):
                         newState = self.min_max_ab(child, True, depth+1, alpha, beta)
@@ -166,7 +304,7 @@ class Pipopipette:
                 lineSelected = input('Enter line ID (exit to exit): ')
             else:
                 lineSelected = raw_input('Enter line ID (exit to exit): ')
-                
+
             if lineSelected == 'exit':
                 # If you get bored. Still have to wait for the computer to finish its move though.
                 sys.exit(0)
@@ -227,3 +365,30 @@ class Pipopipette:
             count+=1
             total+=et
         return total/count
+
+
+
+# Just the code to get the game started. Prompt for starting criteria, instantiate the
+# game class, and set it off to play based on selected first player.
+
+# Value passed in for xdim and ydim are the number of dots, not the number of boxes/lines.
+if sys.version_info[0] == 3:
+    # for Python3
+    xdim = int(input('Enter x dimension: '))
+    ydim = int(input('Enter y dimension: '))
+    plies = int(input('Enter number of plies: '))
+    useAB = input('Use Alpha Beta Pruning? (Y or N) ')
+    whoFirst = input('Do you want to move first? (Y or N) ')
+else:
+    # for Python2
+    xdim = int(raw_input('Enter x dimension: '))
+    ydim = int(raw_input('Enter y dimension: '))
+    plies = int(raw_input('Enter number of plies: '))
+    useAB = raw_input('Use Alpha Beta Pruning? (Y or N) ')
+    whoFirst = raw_input('Do you want to move first? (Y or N) ')
+
+game = Pipopipette(xdim, ydim, plies, useAB)
+if whoFirst == 'Y':
+    game.play(Player.HUMAN)
+else:
+    game.play(Player.COMPUTER)
