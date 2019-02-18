@@ -1,5 +1,6 @@
 from enum import Enum
 
+# Enum enumerates
 class Player(Enum):
-    ONE = 1
-    TWO = 2
+    HUMAN = 1
+    COMPUTER = 2
