@@ -2,6 +2,10 @@ import sys
 from Main import Pipopipette
 from Player import Player
 
+# Just the code to get the game started. Prompt for starting criteria, instantiate the
+# game class, and set it off to play based on selected first player.
+
+# Value passed in for xdim and ydim are the number of dots, not the number of boxes/lines.
 xdim = int(raw_input('Enter x dimension: '))
 ydim = int(raw_input('Enter y dimension: '))
 plies = int(raw_input('Enter number of plies: '))

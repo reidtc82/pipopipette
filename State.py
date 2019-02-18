@@ -2,16 +2,17 @@ from Line import Line
 from Box import Box
 from random import randint
 from Player import Player
-# Siply meant to track the progress of the game. I can acces the lines individually.
+
+# State class to hold all the data for the state.
 class State:
     def __init__(self, xdim, ydim, lines, boxes):
-        # Field is just an array of dots.
-        # self.field = field
         self.scoreState = {'human' : 0, 'computer' : 0}
         self.lines = lines
         self.boxes = boxes
         lineCount = 1
-        #move out of here
+
+        # Lines and boxes collections are built this way so I can references their indexes together.
+        # Init the lines collection with skips for where dots and boxes should be.
         for i in range(xdim+(xdim-1)):
             self.lines.append([])
             for j in range(ydim+(ydim-1)):
@@ -24,7 +25,7 @@ class State:
                 else:
                     self.lines[i].append(None)
 
-        #move out of here
+        # Init boxes collection with skips for where lines and dots should be.
         for i in range(xdim+(xdim-1)):
             self.boxes.append([])
             for j in range(ydim+(ydim-1)):
@@ -38,9 +39,10 @@ class State:
                     self.boxes[i].append(Box(randint(1,9), border))
 
     def score_state(self):
-        # If this is too slow move to the front end when line gets selected.
         tempHumanScore = 0
         tempComputerScore = 0
+        # Move through all the boxes and check the owner. Attribute the box value to the
+        # owners score.
         for row in self.boxes:
             for box in row:
                 if box:
@@ -51,8 +53,10 @@ class State:
                         tempComputerScore += box.get_value()
         self.scoreState['human'] = tempHumanScore
         self.scoreState['computer'] = tempComputerScore
+        # Returning score as a dictionary so I can call either score.
         return self.scoreState
 
+    # Getters and setters.
     def get_boxes(self):
         return self.boxes
 
@@ -65,6 +69,7 @@ class State:
     def set_lines(sef, lines):
         self.lines = lines
 
+    # This checks all the boxes and if they all have owners were done.
     def check_complete(self):
         complete = True
         for row in self.boxes:

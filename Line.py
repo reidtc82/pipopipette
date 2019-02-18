@@ -1,4 +1,4 @@
-# Access these directly when setting.
+# Even more boring than a box is a line.
 class Line:
     def __init__(self, id):
         self.selected = False
