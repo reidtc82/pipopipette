@@ -104,7 +104,7 @@ class Pipopipette:
                                     # If alpha is greater than beta then stop checking children.
                                     break
                             # Set up our best result to return
-                            if childScore>= best:
+                            if childScore >= best:
                                 best = childScore
                                 favoriteChild = child
                     # Return back up the tree.
@@ -123,6 +123,7 @@ class Pipopipette:
                                 if alpha >= beta:
                                     # Stop assessing new children.
                                     break
+                            # Set up for least return.
                             if childScore < best:
                                 best = childScore
                                 favoriteChild = child
